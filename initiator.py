@@ -10,6 +10,9 @@ from enum import Enum
 from pathlib import Path
 
 class textColor:
+    '''
+    Class : For text color in CLI UI
+    '''
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
@@ -22,8 +25,23 @@ class textColor:
 
 class GlobalUtilities(object):
     '''
+    class : Global Utilities
 
+    optionInitiator : Execute method with eval
+
+    clearconsole : clear console ui
+
+    pressKeyToContinue : Press enter to next step
+
+    checkDirectoryExist : Check if argument : directory is existing directory
+
+    endProcess : Close this software session
+
+    warningMessageHandler : Form of Warning message
+
+    errorMessageHandler : Form of error message
     '''
+
     # Option dictionary : For class FeatureProcessors
     __optionMapper = {
         1: "ftpr.help()",
@@ -31,7 +49,8 @@ class GlobalUtilities(object):
         3: "ftpr.openExistingProject()",
         4: "ftpr.deleteExistingProject()",
         5: "ftpr.initiateNewProject()",
-        6: "ftpr.viewSettings()"
+        6: "ftpr.changeProjectDirectory()",
+        7: "ftpr.viewSettings()"
     }
     def __init__(self):
         pass
@@ -70,6 +89,12 @@ class GlobalUtilities(object):
 class FeatureProcessors(GlobalUtilities):
     '''
     Class : It's a class that handles each option functionally.
+
+    returnProjectDirectory : return list of project Directory
+
+    projectDirectoryChecker : if project directory not exist it genereate new directory user designate
+
+    help : print document
     '''
     __CDirectory = 'C:\\'
     __GCCDirectory = 'C:\\mingw64\\bin'
@@ -84,16 +109,7 @@ class FeatureProcessors(GlobalUtilities):
                 self.yml = yaml.load(f,yaml.FullLoader)
                 self.directoryInfo = self.yml['directories']
                 self.__ProjectDirectory = self.directoryInfo['Project_Directory']
-                #If user designated project directory exist save directory
-                if self.checkDirectoryExist(self.__ProjectDirectory):
-                    pass
-                #If user designated project directory didn't exist make directory
-                else:
-                    try:
-                        os.mkdir(self.__ProjectDirectory)
-                        print(f"Project directory : {self.__ProjectDirectory} generated, due to non exist directory")
-                    except OSError as e:
-                        self.errorMessageHandler(e,"Can't generate directory. Check if directory written in config.yml has the proper directory form.")
+                self.projectDirectoryChecker(self.__ProjectDirectory)
         except FileNotFoundError as e:
             self.errorMessageHandler(e,"Config.yml not found! Please regenerate config.yml. Program close")
 
@@ -103,6 +119,20 @@ class FeatureProcessors(GlobalUtilities):
 
     def returnProjectDirectory(self):
         return os.listdir(self.__ProjectDirectory)
+
+    def projectDirectoryChecker(self,rp):
+        # If user designated project directory exist save directory
+        if self.checkDirectoryExist(rp):
+            return True
+        # If user designated project directory didn't exist make directory
+        else:
+            try:
+                os.mkdir(rp)
+                print(f"Project directory : {rp} generated, due to non exist directory")
+                return True
+            except OSError as e:
+                self.errorMessageHandler(e,"Can't generate directory. Check if directory has the proper directory form.")
+                return False
 
     def help(self) -> None:
         self.clearConsole()
@@ -202,6 +232,30 @@ class FeatureProcessors(GlobalUtilities):
                     self.clearConsole()
                     self.warningMessageHandler("Warning : 뒤로가기 위해서는 '/back'을 입력해주세요")
 
+    def changeProjectDirectory(self):
+        print("Enter directory you want to change as project directory.")
+        print(f"Project Directory you designated : {self.__ProjectDirectory}\n")
+        prj_dir = input(">> ")
+        if prj_dir == "/back":
+            self.clearConsole()
+            pass
+        else:
+            if not prj_dir:
+                prj_dir = "C:\\"
+            res = self.projectDirectoryChecker(prj_dir)
+            if res:
+                self.__ProjectDirectory = prj_dir
+                self.directoryInfo['Project_Directory'] = prj_dir
+                with open('config.yml', 'w') as f:
+                    yaml.dump(self.yml, f)
+                print(f"Successfully change Project Directory : {prj_dir}")
+                self.pressKeyToContinue()
+                self.clearConsole()
+            else:
+                print("Fail to change Project Directory... Try again")
+                self.pressKeyToContinue()
+                self.clearConsole()
+
     def deleteExistingProject(self):
         dir_list = self.returnProjectDirectory()
         if not dir_list:
@@ -260,7 +314,7 @@ class FeatureProcessors(GlobalUtilities):
         while True:
             try:
                 print("Please enter the name of the project to be initialized.")
-                print(f"* Project directory will be generated at {self.__ProjectDirectory}")
+                print(f"* Project directory will be generated at {self.__ProjectDirectory}\n")
                 projectName = input(">> ")
                 if projectName.lower() == "/back":
                     self.clearConsole()
@@ -294,7 +348,7 @@ class FeatureProcessors(GlobalUtilities):
         <Settings>
         
         ac : Able to change in config.yml
-        nc : Not able to change this value
+        nc : Unable to change this value
         
         1. nc - Basic GCC Directory( + to Path) : {self.__GCCDirectory}
 
@@ -318,7 +372,7 @@ class CliUI(GlobalUtilities):
     Class : It's a class that processes the CLI UI environment-related parts.
     '''
     def __init__(self) -> None:
-        self.__options = Enum('option', ['Help', 'Install_MinGW_64bit_and_build_basic_ENV', 'Open_existing_project_VSCode','Delete_existing_project','Initiate_new_C_C++_Project','View settings'])
+        self.__options = Enum('option', ['Help', 'Install_MinGW_64bit_and_build_basic_ENV', 'Open_existing_project_VSCode','Delete_existing_project','Initiate_new_C_C++_Project','Change_Project_Directory','View settings'])
 
     def option_selector(self) -> Enum:
         opt = [f'{i.value}. {i.name}' for i in self.__options]
