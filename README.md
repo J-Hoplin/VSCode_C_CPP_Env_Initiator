@@ -12,6 +12,8 @@ Python : ver 3.7.6
 
 **CLone을 하시게 되면 Mingw64가 없기때문에 실행되지 않을 가능성이 높습니다. clone해서 사용하고 싶으신 분은 [이 링크](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/seh/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z/download)를 들어가 다운로드 후 7zip파일을 압축 해제후 zip파일로 다시 압축하고, 아래 사진과 같이 mingw/mingw64.zip 을 추가해주신후 사용해 주시기 바랍니다.** 
 
+**만약 소프트웨어 사용중 오류가 나거나, 개선 방안, 새로운 기능에 대한 제안이 있으신 분은 [issue](https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator/issues)를 남겨주시면 감사하겠습니다**
+
 ![image](https://user-images.githubusercontent.com/45956041/140670957-686fe01c-273f-4930-b9c8-090d1888d2b5.png)
 
 ---
@@ -141,4 +143,4 @@ Python : ver 3.7.6
   
   ![image](https://user-images.githubusercontent.com/45956041/140674387-a3fbbc29-3583-4240-9215-41c3639e6f15.png)
 
-이것으로 소프트웨어 사용 방법에대한 설명을 마치겠습니다. 만약 소프트웨어 사용중 오류가 나거나, 개선 방안, 새로운 기능에 대한 제안이 있으신 분은 [issue](https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator/issues)를 남겨주시면 감사하겠습니다
+이것으로 소프트웨어 사용 방법에대한 설명을 마치겠습니다. 
