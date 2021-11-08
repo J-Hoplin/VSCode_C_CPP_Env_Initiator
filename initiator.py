@@ -334,7 +334,6 @@ class FeatureProcessors(GlobalUtilities):
                     break
                 try:
                     projectName = '_'.join(projectName.split(' '))
-                    print(projectName)
                     newProjectDirectory = str(self.__ProjectDirectory + f"\\{projectName}")
                     batname_initiateProject = self.__batchfilesDirectory + "\\initiateProject.bat"
                     batname_openproject = self.__batchfilesDirectory + "\\openproject.bat"
