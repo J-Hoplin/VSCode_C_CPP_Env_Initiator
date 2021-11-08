@@ -9,6 +9,8 @@ import subprocess
 from enum import Enum
 from pathlib import Path
 
+releaseversion = "1.0.1"
+
 class textColor:
     '''
     Class : For text color in CLI UI
@@ -67,9 +69,12 @@ class GlobalUtilities(object):
     def pressKeyToContinue(cls) -> None:
         input("Press any key to continue...")
 
-    @classmethod
-    def checkDirectoryExist(cls,directory) -> bool:
-        return Path(directory).is_dir()
+    def checkDirectoryExist(self,directory) -> bool:
+        try:
+            res = Path(directory).is_dir()
+            return res
+        except OSError as p:
+            return False
 
     @classmethod
     def endProcess(cls) -> None:
@@ -109,7 +114,7 @@ class FeatureProcessors(GlobalUtilities):
                 self.yml = yaml.load(f,yaml.FullLoader)
                 self.directoryInfo = self.yml['directories']
                 self.__ProjectDirectory = self.directoryInfo['Project_Directory']
-                self.projectDirectoryChecker(self.__ProjectDirectory)
+                self.projectDirectoryChecker(self.__ProjectDirectory,True)
         except FileNotFoundError as e:
             self.errorMessageHandler(e,"Config.yml not found! Please regenerate config.yml. Program close")
 
@@ -120,7 +125,7 @@ class FeatureProcessors(GlobalUtilities):
     def returnProjectDirectory(self):
         return os.listdir(self.__ProjectDirectory)
 
-    def projectDirectoryChecker(self,rp):
+    def projectDirectoryChecker(self,rp,forceclose=False):
         # If user designated project directory exist save directory
         if self.checkDirectoryExist(rp):
             return True
@@ -131,8 +136,11 @@ class FeatureProcessors(GlobalUtilities):
                 print(f"Project directory : {rp} generated, due to non exist directory")
                 return True
             except OSError as e:
-                self.errorMessageHandler(e,"Can't generate directory. Check if directory has the proper directory form.")
-                return False
+                if forceclose:
+                    self.errorMessageHandler(e,"Can't generate directory. Check if directory has the proper directory form.")
+                    return False
+                else:
+                    return False
 
     def help(self) -> None:
         self.clearConsole()
@@ -219,6 +227,8 @@ class FeatureProcessors(GlobalUtilities):
                         projectdir = self.__ProjectDirectory + f"\\{projectName}"
                         batname_openproject = self.__batchfilesDirectory + "\\openproject.bat"
                         subprocess.run([batname_openproject,projectdir])
+                        print(f"Successfully open project : {projectName}")
+                        self.pressKeyToContinue()
                         self.clearConsole()
                         break
                     else:
@@ -233,28 +243,29 @@ class FeatureProcessors(GlobalUtilities):
                     self.warningMessageHandler("Warning : 뒤로가기 위해서는 '/back'을 입력해주세요")
 
     def changeProjectDirectory(self):
-        print("Enter directory you want to change as project directory.")
-        print(f"Project Directory you designated : {self.__ProjectDirectory}\n")
-        prj_dir = input(">> ")
-        if prj_dir == "/back":
-            self.clearConsole()
-            pass
-        else:
-            if not prj_dir:
-                prj_dir = "C:\\"
-            res = self.projectDirectoryChecker(prj_dir)
-            if res:
-                self.__ProjectDirectory = prj_dir
-                self.directoryInfo['Project_Directory'] = prj_dir
-                with open('config.yml', 'w') as f:
-                    yaml.dump(self.yml, f)
-                print(f"Successfully change Project Directory : {prj_dir}")
-                self.pressKeyToContinue()
+        while True:
+            print("Enter directory you want to change as project directory.")
+            print(f"Project Directory you designated : {self.__ProjectDirectory}\n")
+            prj_dir = input(">> ")
+            if prj_dir == "/back":
                 self.clearConsole()
+                break
             else:
-                print("Fail to change Project Directory... Try again")
-                self.pressKeyToContinue()
-                self.clearConsole()
+                if not prj_dir:
+                    prj_dir = "C:\\"
+                res = self.projectDirectoryChecker(prj_dir,False)
+                if res:
+                    self.__ProjectDirectory = prj_dir
+                    self.directoryInfo['Project_Directory'] = prj_dir
+                    with open('config.yml', 'w') as f:
+                        yaml.dump(self.yml, f)
+                    print(f"Successfully change Project Directory : {prj_dir}")
+                    self.pressKeyToContinue()
+                    self.clearConsole()
+                    break
+                else:
+                    self.clearConsole()
+                    self.warningMessageHandler("Warning : Fail to change Project Directory... Try again")
 
     def deleteExistingProject(self):
         dir_list = self.returnProjectDirectory()
@@ -284,6 +295,8 @@ class FeatureProcessors(GlobalUtilities):
                                 opt = input("yes 혹은 no를 입력하여 승인 혹은 보류하기 >> ")
                                 if opt.lower() == "yes":
                                     shutil.rmtree(projectdir)
+                                    print(f"Successfully remove project : {projectName}")
+                                    self.pressKeyToContinue()
                                     self.clearConsole()
                                     break
                                 elif opt.lower() == "no":
@@ -320,7 +333,9 @@ class FeatureProcessors(GlobalUtilities):
                     self.clearConsole()
                     break
                 try:
-                    newProjectDirectory = self.__ProjectDirectory + f"\\{projectName}"
+                    projectName = '_'.join(projectName.split(' '))
+                    print(projectName)
+                    newProjectDirectory = str(self.__ProjectDirectory + f"\\{projectName}")
                     batname_initiateProject = self.__batchfilesDirectory + "\\initiateProject.bat"
                     batname_openproject = self.__batchfilesDirectory + "\\openproject.bat"
                     print(f"{textColor.OKBLUE}Generating Project Directory : {newProjectDirectory} {textColor.ENDC}")
@@ -379,7 +394,7 @@ class CliUI(GlobalUtilities):
 
         while True:
             print("\nStandard : MinGW GCC / G++ 8.1.0")
-            print(f"System Info : {platform.system()} {platform.architecture()[0]}")
+            print(f"System Info : {platform.system()} {platform.architecture()[0]} | Version : {releaseversion}")
             print("Enter '/exit' to end program.")
             print(f"{'-' * 15}")
             for l in opt:
@@ -407,6 +422,7 @@ class CliUI(GlobalUtilities):
         selectedOption = self.option_selector()
         #return value of options
         return selectedOption.value
+
 
 
 if __name__=="__main__":
