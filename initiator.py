@@ -1,7 +1,7 @@
 """
 Written by Hoplin(https://github.com/J-hoplin1)
-Version : v 1.0.0
-Last Written 2021 / 11 /07
+Version : v 1.0.2
+Last Written 2021 / 11 /26
 Python Version : 3.7.5
 """
 import os,sys,yaml,platform,zipfile,shutil
@@ -9,7 +9,7 @@ import subprocess
 from enum import Enum
 from pathlib import Path
 
-releaseversion = "1.0.1"
+releaseversion = "1.0.2(Release : 2021_11_26)"
 
 class textColor:
     '''
@@ -28,38 +28,17 @@ class textColor:
 class GlobalUtilities(object):
     '''
     class : Global Utilities
-
     optionInitiator : Execute method with eval
-
     clearconsole : clear console ui
-
     pressKeyToContinue : Press enter to next step
-
     checkDirectoryExist : Check if argument : directory is existing directory
-
     endProcess : Close this software session
-
     warningMessageHandler : Form of Warning message
-
     errorMessageHandler : Form of error message
     '''
 
-    # Option dictionary : For class FeatureProcessors
-    __optionMapper = {
-        1: "ftpr.help()",
-        2: "ftpr.installAndBuildENV()",
-        3: "ftpr.openExistingProject()",
-        4: "ftpr.deleteExistingProject()",
-        5: "ftpr.initiateNewProject()",
-        6: "ftpr.changeProjectDirectory()",
-        7: "ftpr.viewSettings()"
-    }
     def __init__(self):
         pass
-
-    @classmethod
-    def optionInitiator(cls,num) -> None:
-        eval(GlobalUtilities.__optionMapper[num])
 
     @classmethod
     def clearConsole(cls) -> None:
@@ -94,11 +73,8 @@ class GlobalUtilities(object):
 class FeatureProcessors(GlobalUtilities):
     '''
     Class : It's a class that handles each option functionally.
-
     returnProjectDirectory : return list of project Directory
-
     projectDirectoryChecker : if project directory not exist it genereate new directory user designate
-
     help : print document
     '''
     __CDirectory = 'C:\\'
@@ -109,6 +85,15 @@ class FeatureProcessors(GlobalUtilities):
     __ProjectDirectory = None
 
     def __init__(self,bitselection="64bit") -> None:
+        self.__optionMapper = {
+            1: self.help,
+            2: self.installAndBuildENV,
+            3: self.openExistingProject,
+            4: self.deleteExistingProject,
+            5: self.initiateNewProject,
+            6: self.changeProjectDirectory,
+            7: self.viewSettings
+        }
         try:
             with open('config.yml') as f:
                 self.yml = yaml.load(f,yaml.FullLoader)
@@ -142,13 +127,15 @@ class FeatureProcessors(GlobalUtilities):
                 else:
                     return False
 
+    def executeMethod(self,optNum):
+        self.__optionMapper[optNum]()
+
     def help(self) -> None:
         self.clearConsole()
         print(f"""
         <Document : About function per each Option>
         
         ※ Basic Command
-
         /exit : You can exit this program. You can use this command in main
         
         /back : You can go back to before state. You can use this command in option 3,4,5
@@ -175,9 +162,7 @@ class FeatureProcessors(GlobalUtilities):
         5. Initiate New Project
         
         -> You can initiate new C/C++ Project at VSCode
-
         6. View Settings
-
         -> You can see basic information about this software
         """)
         self.pressKeyToContinue()
@@ -365,11 +350,8 @@ class FeatureProcessors(GlobalUtilities):
         nc : Unable to change this value
         
         1. nc - Basic GCC Directory( + to Path) : {self.__GCCDirectory}
-
         2. ac - Where did my project saved in this session? : {self.__ProjectDirectory}
-
-        3. nc - Support Language / Compiler Info : C_C++ / MinGW64 GCC Compiler 8.1.0 64bit(x86_64-posix-seh) 
-        
+        3. nc - Support Language / Compiler Info : C_C++ / MinGW64 GCC Compiler 8.1.0 64bit(x86_64-posix-seh)      
         4. nc - Support Tool : Visual Studio Code
 
         * MinGW URL : https://sourceforge.net/projects/mingw-w64/files/mingw-w64/
@@ -431,4 +413,4 @@ if __name__=="__main__":
     while True:
         # Option : User selection
         optionSelect = cli.returnUserOption()
-        GlobalUtilities.optionInitiator(optionSelect)
+        ftpr.executeMethod(optionSelect)
