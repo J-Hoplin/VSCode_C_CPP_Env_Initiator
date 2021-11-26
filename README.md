@@ -1,8 +1,8 @@
 # Visual Studio Code C / C++ Environment Initiator
 
-Latest Version : v 1.0.1(2021/11/08)
+Latest Version : v 1.0.2(2021/11/26)
 
-[.exe link here](https://drive.google.com/file/d/1DF6sLkyjA7dk-HW--5YVjT6SstYgTW2X/view?usp=sharing)
+- Windows 실행파일은 이 프로그램 [Repository의 Release](https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator/releases)에서 다운로드 하실 수 있습니다.
 
 About : Visual Studio Code에서 C/C++환경을 MinGW GCC/G++를 활용해서 프로젝트 생성 / 삭제 / 환경변수 등록을 해주는 프로그램입니다. 처음에는 TypeScript로 구현을 하고 싶었으나, 제 TypeScript숙련도에 문제가 있는상태라 우선 python3와 Windows Batch를 이용해서 만들었습니다. **실행파일은 압축해제후 dist -> initiator -> initiator(톱니바퀴모양).exe를 실행해주시면 됩니다. 우클릭해서 바로가기를 만들어 사용하시는게 편합니다. 압축해제 후 있는 바로가기는 사용할 수 없는점 참고바랍니다.**. 추후 TypeScript로 포팅할 예정이니 기대해주시면 감사하겠습니다.
 
@@ -16,6 +16,13 @@ Python : ver 3.7.6
 
 ![image](https://user-images.githubusercontent.com/45956041/140670957-686fe01c-273f-4930-b9c8-090d1888d2b5.png)
 
+---
+### Patch Note
+
+- v 1.0.2
+
+  - Release Date : 2021 / 11 / 26
+  - Note : 소스코드 내부 보안을 위해 eval()함수로 처리하던 메소드 실행을 내부적인 메소드 처리로 변경하였습니다. eval()함수의 취약점은 이 [링크](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/eval#eval%EC%9D%84_%EC%A0%88%EB%8C%80_%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80_%EB%A7%90_%EA%B2%83!)를 참조해 보시기 바랍니다.
 ---
 
 ### 사용방법
