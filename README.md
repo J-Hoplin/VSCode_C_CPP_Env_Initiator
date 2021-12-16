@@ -6,7 +6,7 @@ Latest Version : v 1.0.2(2021/11/26)
 
 About : Visual Studio Code에서 C/C++환경을 MinGW GCC/G++를 활용해서 프로젝트 생성 / 삭제 / 환경변수 등록을 해주는 프로그램입니다. 처음에는 TypeScript로 구현을 하고 싶었으나, 제 TypeScript숙련도에 문제가 있는상태라 우선 python3와 Windows Batch를 이용해서 만들었습니다. **실행파일은 압축해제후 dist -> initiator -> initiator(톱니바퀴모양).exe를 실행해주시면 됩니다. 우클릭해서 바로가기를 만들어 사용하시는게 편합니다. 압축해제 후 있는 바로가기는 사용할 수 없는점 참고바랍니다.**. 추후 TypeScript로 포팅할 예정이니 기대해주시면 감사하겠습니다.
 
-**이 프로그램을 사용하기 위해서는 VSCode가 add to path가 체크된 상태에서 설치가 되어있어야합니다**
+**이 프로그램을 사용하기 위해서는 VSCode가 add to path가 체크된 상태에서 설치가 되어있어야합니다. 또한 VS Code를 설치하시고 최초 실행 후 컴퓨터를 껏다가 켜신 다음 사용하시기 바랍니다.**
 
 Python : ver 3.7.6
 
