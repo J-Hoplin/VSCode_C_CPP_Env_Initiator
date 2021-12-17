@@ -1,6 +1,6 @@
 """
 Written by Hoplin(https://github.com/J-hoplin1)
-Version : v 1.0.2
+Version : v 1.1.0
 Last Written 2021 / 11 /26
 Python Version : 3.7.5
 """
