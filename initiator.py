@@ -1,15 +1,15 @@
 """
 Written by Hoplin(https://github.com/J-hoplin1)
-Version : v 1.1.0
+Version : v 1.0.2
 Last Written 2021 / 11 /26
 Python Version : 3.7.5
 """
-import os,sys,yaml,platform,zipfile,shutil,wget
+import os,sys,yaml,platform,zipfile,shutil
 import subprocess
 from enum import Enum
 from pathlib import Path
 
-releaseversion = "1.1.0(Release : 2021_12_17)"
+releaseversion = "1.0.2(Release : 2021_11_26)"
 
 class textColor:
     '''
@@ -47,9 +47,6 @@ class GlobalUtilities(object):
     @classmethod
     def pressKeyToContinue(cls) -> None:
         input("Press any key to continue...")
-
-    def printBlueColor(self,msg):
-        print(f"{textColor.OKBLUE}Software Notice : {msg}{textColor.ENDC}")
 
     def checkDirectoryExist(self,directory) -> bool:
         try:
@@ -91,12 +88,11 @@ class FeatureProcessors(GlobalUtilities):
         self.__optionMapper = {
             1: self.help,
             2: self.installAndBuildENV,
-            3: self.installVSCode,
-            4: self.openExistingProject,
-            5: self.deleteExistingProject,
-            6: self.initiateNewProject,
-            7: self.changeProjectDirectory,
-            8: self.viewSettings
+            3: self.openExistingProject,
+            4: self.deleteExistingProject,
+            5: self.initiateNewProject,
+            6: self.changeProjectDirectory,
+            7: self.viewSettings
         }
         try:
             with open('config.yml') as f:
@@ -133,47 +129,6 @@ class FeatureProcessors(GlobalUtilities):
 
     def executeMethod(self,optNum):
         self.__optionMapper[optNum]()
-
-    def installVSCode(self):
-        '''
-        VSCode가 환경변수에 등록하는 내용은 Micosoft VS Code/bin 말고는 없다.(명령어 code)
-        '''
-        def extractVSCandEnroll(self,directory,batchdirectory,batchdirectory2):
-            with zipfile.ZipFile(f"{os.getcwd()}\\VSCodeZIP.zip", 'r') as zfile:
-                zfile.extractall(directory)
-            self.printBlueColor(f"Visual Studio Code Successfully installed in : {directory}")
-            binLocation = f"{directory}\\bin"
-            subprocess.run([batchdirectory,binLocation])
-            self.printBlueColor(f"You can now use command 'code' in another session.")
-            self.printBlueColor(f"Please restart this program. Program will be closed")
-            self.pressKeyToContinue()
-            self.clearConsole()
-            sys.exit()
-
-        batchlocation = self.__batchfilesDirectory + "\\enrollVSC.bat"
-        firstrunvsclocation = self.__batchfilesDirectory+"\\firstrunVSC.bat"
-        baseDirectory = f"{os.getcwd()}\\VSCode"
-        workingDirectory = os.getcwd()
-        choosedDirectory = None
-        # If base directory not exist
-        if not self.checkDirectoryExist(baseDirectory):
-            try:
-                os.mkdir(baseDirectory)
-                choosedDirectory = f"{os.getcwd()}\\VSCode"
-                self.printBlueColor(f"Extracting Visual Studio Code at {choosedDirectory}...")
-                extractVSCandEnroll(self,choosedDirectory,batchlocation,firstrunvsclocation)
-            except PermissionError as e:
-                self.warningMessageHandler("You already installed VS Code with this program. Please Check again")
-                self.pressKeyToContinue()
-            except OSError as e:
-                self.warningMessageHandler("You already installed VS Code with this program. Please Check again")
-                self.pressKeyToContinue()
-
-        # If base directory exist
-        else:
-            self.warningMessageHandler("You already installed VS Code. Please Check again")
-            self.pressKeyToContinue()
-
 
     def help(self) -> None:
         self.clearConsole()
@@ -367,9 +322,9 @@ class FeatureProcessors(GlobalUtilities):
                     newProjectDirectory = str(self.__ProjectDirectory + f"\\{projectName}")
                     batname_initiateProject = self.__batchfilesDirectory + "\\initiateProject.bat"
                     batname_openproject = self.__batchfilesDirectory + "\\openproject.bat"
-                    self.printBlueColor(f"Generating Project Directory : {newProjectDirectory}")
+                    print(f"{textColor.OKBLUE}Generating Project Directory : {newProjectDirectory} {textColor.ENDC}")
                     os.mkdir(newProjectDirectory)
-                    self.printBlueColor(f"Generating VSCode Configuration File : {newProjectDirectory}")
+                    print(f"{textColor.OKBLUE}Generating VSCode Configuration File : {newProjectDirectory}{textColor.ENDC}")
                     subprocess.run([batname_initiateProject, newProjectDirectory])
                     print(f"Open initiated project at Visual Studio Code...")
                     subprocess.run([batname_openproject, newProjectDirectory])
@@ -413,7 +368,7 @@ class CliUI(GlobalUtilities):
     Class : It's a class that processes the CLI UI environment-related parts.
     '''
     def __init__(self) -> None:
-        self.__options = Enum('option', ['Help', 'Install_MinGW_64bit_and_build_basic_ENV','Install_VS_Code(Not Recommended)','Open_existing_project_VSCode','Delete_existing_project','Initiate_new_C_C++_Project','Change_Project_Directory','View settings'])
+        self.__options = Enum('option', ['Help', 'Install_MinGW_64bit_and_build_basic_ENV', 'Open_existing_project_VSCode','Delete_existing_project','Initiate_new_C_C++_Project','Change_Project_Directory','View settings'])
 
     def option_selector(self) -> Enum:
         opt = [f'{i.value}. {i.name}' for i in self.__options]
