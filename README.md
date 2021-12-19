@@ -1,6 +1,6 @@
 # Visual Studio Code C / C++ Environment Initiator
 
-Latest Version : v 1.0.2(2021/11/26)
+Latest Version : v 1.0.3(2021/12/20)
 
 - Windows 실행파일은 이 프로그램 [Repository의 Release](https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator/releases)에서 다운로드 하실 수 있습니다.
 
