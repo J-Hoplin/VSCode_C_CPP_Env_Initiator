@@ -131,63 +131,72 @@ class FeatureProcessors(GlobalUtilities):
         self.__optionMapper[optNum]()
 
     def help(self) -> None:
-        self.clearConsole()
-        print(f"""
-        <Document : About function per each Option>
-        
-        ※ Basic Command
-        /exit : You can exit this program. You can use this command in main
-        
-        /back : You can go back to before state. You can use this command in option 3,4,5
-        
-        1. Help
-        
-        -> show this documentation
-        
-        2. Install MinGW 64bit and build basic ENV
-        
-        {textColor.WARNING}* Warning : This option require VS Code to be in PATH. If not installation may be in process abnormally.{textColor.ENDC}
-        * Neccessary :  Check windows environment variable, VSCode Extension if successfully install, enroll
-        -> Unzip MinGW GCC Compiler(Standard : 64bit / v 8.1.0) and enroll to environment variable. After this it enroll    GCC to environment variable, next it install Basic C/C++ VS Code Extension.
-        
-        3. Open Existing Project
-        
-        -> You can select project directory and open it with vscode
-        
-        4. Delete Existing Project
-        
-        {textColor.WARNING}* Warning : You can't recover delete file after remove.{textColor.ENDC}
-        -> You can delete project which you generated before
-        
-        5. Initiate New Project
-        
-        -> You can initiate new C/C++ Project at VSCode
-        6. View Settings
-        -> You can see basic information about this software
-        """)
-        self.pressKeyToContinue()
-        self.clearConsole()
+        try:
+            self.clearConsole()
+            print(f"""
+                    <Document : About function per each Option>
+
+                    ※ Basic Command
+                    /exit : You can exit this program. You can use this command in main
+
+                    /back : You can go back to before state. You can use this command in option 3,4,5
+
+                    1. Help
+
+                    -> show this documentation
+
+                    2. Install MinGW 64bit and build basic ENV
+
+                    {textColor.WARNING}* Warning : This option require VS Code to be in PATH. If not installation may be in process abnormally.{textColor.ENDC}
+                    * Neccessary :  Check windows environment variable, VSCode Extension if successfully install, enroll
+                    -> Unzip MinGW GCC Compiler(Standard : 64bit / v 8.1.0) and enroll to environment variable. After this it enroll    GCC to environment variable, next it install Basic C/C++ VS Code Extension.
+
+                    3. Open Existing Project
+
+                    -> You can select project directory and open it with vscode
+
+                    4. Delete Existing Project
+
+                    {textColor.WARNING}* Warning : You can't recover delete file after remove.{textColor.ENDC}
+                    -> You can delete project which you generated before
+
+                    5. Initiate New Project
+
+                    -> You can initiate new C/C++ Project at VSCode
+                    6. View Settings
+                    -> You can see basic information about this software
+                    """)
+            self.pressKeyToContinue()
+            self.clearConsole()
+        except KeyboardInterrupt as e:
+            self.clearConsole()
+            return
 
 
     def installAndBuildENV(self):
-        if self.checkDirectoryExist(self.__GCCDirectory):
-            self.warningMessageHandler(f"Directory : {self.__GCCDirectory} already exist! Please check if MingW has already been installed")
-        else:
-            try:
-                print("Decompressing minGW64. This might take some time. Please wait a moment.")
-                print(f"Decompressing to : {self.__decompressDirectory}")
-                self.clearConsole()
-                with zipfile.ZipFile(self.__minGWzipfile, 'r') as z:
-                    z.extractall(self.__decompressDirectory)
-            except FileNotFoundError as e:
-                self.errorMessageHandler(e, "mingw64/mingw64.zip not found. Program close")
-                # Add minGW64 GCC/G++ to Windows PATH : run batch file
-            batname_enrollvariable = self.__batchfilesDirectory + "\\enrollvariable.bat"
-            subprocess.run([batname_enrollvariable])
-            print(
-                "Install C/C++ Extension to Visual Studio Code. Make sure extension installed completely after this process.")
-            batname_installExtension = self.__batchfilesDirectory + "\\installCExtension.bat"
-            subprocess.run([batname_installExtension])
+        try:
+            if self.checkDirectoryExist(self.__GCCDirectory):
+                self.warningMessageHandler(
+                    f"Directory : {self.__GCCDirectory} already exist! Please check if MingW has already been installed")
+            else:
+                try:
+                    print("Decompressing minGW64. This might take some time. Please wait a moment.")
+                    print(f"Decompressing to : {self.__decompressDirectory}")
+                    self.clearConsole()
+                    with zipfile.ZipFile(self.__minGWzipfile, 'r') as z:
+                        z.extractall(self.__decompressDirectory)
+                except FileNotFoundError as e:
+                    self.errorMessageHandler(e, "mingw64/mingw64.zip not found. Program close")
+                    # Add minGW64 GCC/G++ to Windows PATH : run batch file
+                batname_enrollvariable = self.__batchfilesDirectory + "\\enrollvariable.bat"
+                subprocess.run([batname_enrollvariable])
+                print(
+                    "Install C/C++ Extension to Visual Studio Code. Make sure extension installed completely after this process.")
+                batname_installExtension = self.__batchfilesDirectory + "\\installCExtension.bat"
+                subprocess.run([batname_installExtension])
+        except KeyboardInterrupt as e:
+            self.warningMessageHandler("You forcely stop while progressing setting! This could cause abnormal operation in the future.  ")
+            pass
 
     def openExistingProject(self):
         dir_list = self.returnProjectDirectory()
@@ -231,7 +240,15 @@ class FeatureProcessors(GlobalUtilities):
         while True:
             print("Enter directory you want to change as project directory.")
             print(f"Project Directory you designated : {self.__ProjectDirectory}\n")
-            prj_dir = input(">> ")
+            inpLoop = True
+            while inpLoop:
+                try:
+                    prj_dir = input(">> ")
+                    inpLoop = False
+                except KeyboardInterrupt as e:
+                    self.clearConsole()
+                    self.warningMessageHandler("Warning : 뒤로가기 위해서는 '/back'을 입력해주세요")
+
             if prj_dir == "/back":
                 self.clearConsole()
                 break
@@ -343,24 +360,28 @@ class FeatureProcessors(GlobalUtilities):
                 self.warningMessageHandler("Warning : 뒤로가기 위해서는 '/back'을 입력해주세요")
 
     def viewSettings(self) -> None:
-        print(f"""
-        <Settings>
-        
-        ac : Able to change in config.yml
-        nc : Unable to change this value
-        
-        1. nc - Basic GCC Directory( + to Path) : {self.__GCCDirectory}
-        2. ac - Where did my project saved in this session? : {self.__ProjectDirectory}
-        3. nc - Support Language / Compiler Info : C_C++ / MinGW64 GCC Compiler 8.1.0 64bit(x86_64-posix-seh)      
-        4. nc - Support Tool : Visual Studio Code
+        try:
+            print(f"""
+                    <Settings>
 
-        * MinGW URL : https://sourceforge.net/projects/mingw-w64/files/mingw-w64/
-        * You can change your project directory from config.yml : Project_Directory
-        * This software source code is open source : https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator
-        * License : MIT License
-        """)
-        self.pressKeyToContinue()
-        self.clearConsole()
+                    ac : Able to change in config.yml
+                    nc : Unable to change this value
+
+                    1. nc - Basic GCC Directory( + to Path) : {self.__GCCDirectory}
+                    2. ac - Where did my project saved in this session? : {self.__ProjectDirectory}
+                    3. nc - Support Language / Compiler Info : C_C++ / MinGW64 GCC Compiler 8.1.0 64bit(x86_64-posix-seh)      
+                    4. nc - Support Tool : Visual Studio Code
+
+                    * MinGW URL : https://sourceforge.net/projects/mingw-w64/files/mingw-w64/
+                    * You can change your project directory from config.yml : Project_Directory
+                    * This software source code is open source : https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator
+                    * License : MIT License
+                    """)
+            self.pressKeyToContinue()
+            self.clearConsole()
+        except KeyboardInterrupt as e:
+            self.clearConsole()
+            return
 
 # CLI UI class
 class CliUI(GlobalUtilities):
