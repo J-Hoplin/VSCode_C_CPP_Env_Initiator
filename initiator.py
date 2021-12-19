@@ -1,7 +1,7 @@
 """
 Written by Hoplin(https://github.com/J-hoplin1)
-Version : v 1.0.2
-Last Written 2021 / 11 /26
+Version : v 1.0.3
+Last Editted 2021 / 12 / 20
 Python Version : 3.7.5
 """
 import os,sys,yaml,platform,zipfile,shutil
@@ -9,7 +9,7 @@ import subprocess
 from enum import Enum
 from pathlib import Path
 
-releaseversion = "1.0.2(Release : 2021_11_26)"
+releaseversion = "1.0.3(Release : 2021_12_20)"
 
 class textColor:
     '''
@@ -42,7 +42,12 @@ class GlobalUtilities(object):
 
     @classmethod
     def clearConsole(cls) -> None:
-        os.system('cls')
+        #Windows Clear Console
+        if platform.system() == "Windows":
+            os.system('cls')
+        #Darwin Clear Console
+        else:
+            os.system('clear')
 
     @classmethod
     def pressKeyToContinue(cls) -> None:
@@ -58,6 +63,10 @@ class GlobalUtilities(object):
     @classmethod
     def endProcess(cls) -> None:
         sys.exit()
+
+    @staticmethod
+    def globalWarningMessageHandler(message) -> None:
+        print(f"{textColor.WARNING}{message}{textColor.ENDC}")
 
     def warningMessageHandler(self,message) -> None:
         print(f"{textColor.WARNING}{message}{textColor.ENDC}")
@@ -134,38 +143,38 @@ class FeatureProcessors(GlobalUtilities):
         try:
             self.clearConsole()
             print(f"""
-                    <Document : About function per each Option>
+        <Document : About function per each Option>
 
-                    ※ Basic Command
-                    /exit : You can exit this program. You can use this command in main
+        ※ Basic Command
+        /exit : You can exit this program. You can use this command in main
 
-                    /back : You can go back to before state. You can use this command in option 3,4,5
+        /back : You can go back to before state. You can use this command in option 3,4,5
 
-                    1. Help
+        1. Help
 
-                    -> show this documentation
+        -> show this documentation
 
-                    2. Install MinGW 64bit and build basic ENV
+        2. Install MinGW 64bit and build basic ENV
 
-                    {textColor.WARNING}* Warning : This option require VS Code to be in PATH. If not installation may be in process abnormally.{textColor.ENDC}
-                    * Neccessary :  Check windows environment variable, VSCode Extension if successfully install, enroll
-                    -> Unzip MinGW GCC Compiler(Standard : 64bit / v 8.1.0) and enroll to environment variable. After this it enroll    GCC to environment variable, next it install Basic C/C++ VS Code Extension.
+        {textColor.WARNING}* Warning : This option require VS Code to be in PATH. If not installation may be in process abnormally.{textColor.ENDC}
+        * Neccessary :  Check windows environment variable, VSCode Extension if successfully install, enroll
+        -> Unzip MinGW GCC Compiler(Standard : 64bit / v 8.1.0) and enroll to environment variable. After this it enroll    GCC to environment variable, next it install Basic C/C++ VS Code Extension.
 
-                    3. Open Existing Project
+        3. Open Existing Project
 
-                    -> You can select project directory and open it with vscode
+        -> You can select project directory and open it with vscode
 
-                    4. Delete Existing Project
+         4. Delete Existing Project
 
-                    {textColor.WARNING}* Warning : You can't recover delete file after remove.{textColor.ENDC}
-                    -> You can delete project which you generated before
+         {textColor.WARNING}* Warning : You can't recover delete file after remove.{textColor.ENDC}
+         -> You can delete project which you generated before
 
-                    5. Initiate New Project
+         5. Initiate New Project
 
-                    -> You can initiate new C/C++ Project at VSCode
-                    6. View Settings
-                    -> You can see basic information about this software
-                    """)
+         -> You can initiate new C/C++ Project at VSCode
+         6. View Settings
+         -> You can see basic information about this software
+            """)
             self.pressKeyToContinue()
             self.clearConsole()
         except KeyboardInterrupt as e:
@@ -362,21 +371,22 @@ class FeatureProcessors(GlobalUtilities):
     def viewSettings(self) -> None:
         try:
             print(f"""
-                    <Settings>
+        <Settings>
 
-                    ac : Able to change in config.yml
-                    nc : Unable to change this value
+        ac : Able to change in config.yml
+        nc : Unable to change this value
 
-                    1. nc - Basic GCC Directory( + to Path) : {self.__GCCDirectory}
-                    2. ac - Where did my project saved in this session? : {self.__ProjectDirectory}
-                    3. nc - Support Language / Compiler Info : C_C++ / MinGW64 GCC Compiler 8.1.0 64bit(x86_64-posix-seh)      
-                    4. nc - Support Tool : Visual Studio Code
+        1. nc - Basic GCC Directory( + to Path) : {self.__GCCDirectory}
+        2. ac - Where did my project saved in this session? : {self.__ProjectDirectory}
+        3. nc - Support Language / Compiler Info : C_C++ / MinGW64 GCC Compiler 8.1.0 64bit(x86_64-posix-seh)      
+        4. nc - Support Tool : Visual Studio Code
 
-                    * MinGW URL : https://sourceforge.net/projects/mingw-w64/files/mingw-w64/
-                    * You can change your project directory from config.yml : Project_Directory
-                    * This software source code is open source : https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator
-                    * License : MIT License
-                    """)
+        * MinGW URL : https://sourceforge.net/projects/mingw-w64/files/mingw-w64
+        * You can change your project directory from 'config.yml - Project_Directory'
+        * This software source code is open source : https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator
+        * If you find some bugs or additional features you want to add, please leave a comment at https://github.com/J-hoplin1/VSCode_C_CPP_Env_Initiator/issues
+        * License : MIT License
+        """)
             self.pressKeyToContinue()
             self.clearConsole()
         except KeyboardInterrupt as e:
@@ -428,10 +438,18 @@ class CliUI(GlobalUtilities):
 
 
 if __name__=="__main__":
-    GlobalUtilities.clearConsole()
-    ftpr = FeatureProcessors()
-    cli = CliUI()
-    while True:
-        # Option : User selection
-        optionSelect = cli.returnUserOption()
-        ftpr.executeMethod(optionSelect)
+    #This software is only compatible for Windows OS
+    #Check system OS
+    platf = platform.system()
+    if platf == "Windows":
+        GlobalUtilities.clearConsole()
+        ftpr = FeatureProcessors()
+        cli = CliUI()
+        while True:
+            # Option : User selection
+            optionSelect = cli.returnUserOption()
+            ftpr.executeMethod(optionSelect)
+    else:
+        GlobalUtilities.globalWarningMessageHandler("This program only compatible for Windows OS. Sorry")
+        GlobalUtilities.pressKeyToContinue()
+        GlobalUtilities.clearConsole()
